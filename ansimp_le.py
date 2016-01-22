@@ -5,8 +5,11 @@ DOCUMENTATION = '''
 module: ansimp_le
 short_description: A simple Let's Encrypt Ansible Module.
 version_added: "0.0";
-author:
+author: Joy Bhattacherjee
+email: joy.bhattacherjee@gmail.com
+github: https://github.com/Hashfyre
 notes:
+    - This module is in Planning stage.
 requirements:
 description:
     - An Ansible Wrapper module over simp_le, a simple Let's Encrypt Client.
@@ -112,7 +115,7 @@ EXAMPLES = '''
     domains: '{{ item[0] }}'
     plugins: '{{ item[1] }}'
     default_root: "/var/www/html"
- with_nested:
+ with_items:
     - [ 'example.com', 'www.example.com', 'example.net:/var/www/other_html']
     - [ 'fullchain.pem', 'key.pem' ]
 
@@ -124,19 +127,19 @@ EXAMPLES = '''
     domains: '{{ item[0] }}'
     plugins: '{{ item[1] }}'
     default_root: "/var/www/html"
- with_nested:
+ with_items:
     - [ 'example.com', 'www.example.com', 'example.net:/var/www/other_html']
     - [ 'fullchain.pem', 'key.pem' ]
 
  Returns: SSLCertificateKeyFile, SSLCertificateFile
 
-- name: Get LE Certificate for a NginX Server
+- name: Get LE Certificate for an Apache < 2.4.8 Server
   ansimp_le:
     email: you@example.com
     domains: '{{ item[0] }}'
     plugins: '{{ item[1] }}'
     default_root: "/var/www/html"
- with_nested:
+ with_items:
     - [ 'example.com', 'www.example.com', 'example.net:/var/www/other_html']
     - [ 'cert.pem', 'fullchain.pem', 'key.pem' ]
 
@@ -146,3 +149,27 @@ EXAMPLES = '''
 RETURN = '''
 SSL Certificate:
 '''
+
+
+def main():
+    module = AnsibleModule(
+                argument_spec=dict(
+                    domain=dict(),
+                    default_root=dict(),
+                    plugins=dict(),
+                    cert_key_size=dict()
+                    valid_min=dict(),
+                    reuse_key=dict(),
+                    account_key_public_exponent=dict()
+                    account_key_size=dict(),
+                    tos_SHA256=dict(),
+                    email=dict(),
+                    user_agent=dict(),
+                    server=dict(),
+                    revoke=dict()
+                )
+            )
+
+
+if __name__ == '__main__':
+    main(sys.argv[1:])
