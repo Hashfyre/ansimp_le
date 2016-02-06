@@ -10,5 +10,5 @@ addons:
       - python2.4
       - python2.6
 script:
-  - python2.6 -m compileall -fq .
+  # - python2.6 -m compileall -fq .
   - python2.7 -m compileall -fq .
