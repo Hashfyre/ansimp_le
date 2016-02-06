@@ -161,7 +161,7 @@ def main():
                                 'chain.pem', 'external.sh', 'full.pem',
                                 'fullchain.pem', 'key.der', 'key.pem'
                                  ]),
-                    cert_key_size=dict(default=4096)
+                    cert_key_size=dict(default=4096),
                     valid_min=dict(default=2592000),
                     reuse_key=dict(default='False', choicees=[
                                     'True',
