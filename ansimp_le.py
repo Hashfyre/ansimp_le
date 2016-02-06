@@ -225,7 +225,8 @@ def main():
         logging.info("arg_dict: %s", arg_dict)
 
         arg_list = [arg for switch_value in arg_dict.items() for arg in switch_value]
-        logging.info'arg_list: %s', arg_list)
+        logging.info('arg_list: %s', arg_list)
+
         return arg_list
 
     simp_le(createcliarglist(module))
