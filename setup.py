@@ -20,6 +20,7 @@ setup(
     packages=['ansimp_le'],
     keywords='ansible letsencrypt simp_le',
     install_requires=[],
+    dependency_links=['https://github.com/kuba/simp_le']
     entry_points={
         'console_scripts': [
             'ansimp_le=ansimp_le:main',
