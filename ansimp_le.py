@@ -203,10 +203,10 @@ def main():
                 )
             )
 
-    logging.basicConfig(filename='example.log', filemode='w', level=logging.WARNING)
+    logging.basicConfig(filename='ansimp_le.log', filemode='w', level=logging.INFO)
 
     def createcliarglist(module):
-        logging.warning("module.params: %s", module.params)
+        logging.info("module.params: %s", module.params)
 
         params_dict = {k: v for k, v in module.params.items() if v != 'False'}
 
@@ -222,7 +222,7 @@ def main():
 
         arg_dict = {convertkeystoswitches(k):  str(v) for k, v in params_dict.items()}
 
-        logging.warning("arg_dict: %s", arg_dict)
+        logging.info("arg_dict: %s", arg_dict)
 
         arg_list = [arg for switch_value in arg_dict.items() for arg in switch_value]
         logging.warning('arg_list: %s', arg_list)
