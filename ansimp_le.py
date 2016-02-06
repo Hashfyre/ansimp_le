@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+import sys
+
+sys.path.append('./simp_le')
+# try:
+from simp_le import main
+# except ImportError:
+#     raise ImportError('[ERROR] Module simp_le could not be imported.')
+
 DOCUMENTATION = '''
 ---
 module: ansimp_le
@@ -28,11 +36,13 @@ options:
             - Domain name that will be included in the certificate.
             - Must be specified at least once.
         default: None
+        required: false
         version_added: Not Added
     default_root:
         description:
             - Default webroot path
         default: None
+        required: true
         version_added: Not Added
     plugins:
         description:
@@ -41,6 +51,7 @@ options:
             - Should be specified as many times as it is necessary
               to cover all components
         default: []
+        reuired: true
         choices:
             - [ account_key.json', 'cert.der', 'cert.pem',
               'chain.pem', 'external.sh', 'full.pem',
@@ -51,33 +62,39 @@ options:
             - Certificate key size in BITS.
             - Fresh key is created for each renewal.
         default: 4096
+        required: false
         version_added: Not Added
     valid_min:
         description:
             - Minimum validity of the resulting certificate.
         default: 2592000
+        required: false
         version_added: Not Added
     reuse_key:
         description:
             - Reuse private key if it was previously persisted.
         default: False
+        required: false
         choices: [ 'True', 'False' ]
         version_added: Not Added
     account_key_public_exponent:
         description:
             - Account key public exponent value in BITS.
         default: 65537
+        required: false
         version_added: Not Added
     account_key_size:
         description:
             - Account key size in BITS.
         default: 4096
+        required: false
         version_added: Not Added
     tos_SHA256:
         description:
             - SHA-256 hash of the contents of Terms Of Service URI contents.
         default:
             - 33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f
+        required: false
         version_added: Not Added
     email:
         description:
@@ -87,6 +104,7 @@ options:
                 - Account Recovery
             - Highly recommended to set this value.
         default: None
+        required: false
         version_added: Not Added
     user_agent:
         description:
@@ -94,16 +112,19 @@ options:
             - Privacy Protection
                 - Override with user_agent: ""
         default: simp_le/0
+        required: false
         version_added: Not Added
     server:
         description:
             - Directory URI for the CA ACME API endpoint
         default: https://acme-v01.api.letsencrypt.org/directory
+        required: false
         version_added: Not Added
     revoke:
         description:
             - Revoke existing certificate
-        default: False
+        default: 'False'
+        required: false
         choices: [ 'True', 'False' ]
         version_added: Not Added
 '''
@@ -154,36 +175,57 @@ SSL Certificate:
 def main():
     module = AnsibleModule(
                 argument_spec=dict(
-                    domain=dict(default='None'),
-                    default_root=dict(default='None'),
-                    plugins=dict(default=[], choices=[
+                    domain=dict(default='None', required=False),
+                    default_root=dict(default='None', required=False),
+                    plugins=dict(default=[], required=False, choices=[
                                 'account_key.json', 'cert.der', 'cert.pem',
                                 'chain.pem', 'external.sh', 'full.pem',
                                 'fullchain.pem', 'key.der', 'key.pem'
                                  ]),
-                    cert_key_size=dict(default=4096),
-                    valid_min=dict(default=2592000),
-                    reuse_key=dict(default='False', choicees=[
+                    cert_key_size=dict(default='4096', required=False),
+                    valid_min=dict(default='2592000', require=False),
+                    reuse_key=dict(default='False', required=False, choices=[
                                     'True',
-                                    'False'
-                                    ]),
-                    account_key_public_exponent=dict(default=65537),
-                    account_key_size=dict(default=4096),
-                    tos_SHA256=dict(default=
-                                    '33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f'
+                                    'False']),
+                    account_key_public_exponent=dict(default='65537', required=False),
+                    account_key_size=dict(default='4096', required=False),
+                    tos_SHA256=dict(default='33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f',
+                                    required=False
                                     ),
-                    email=dict(default='None'),
+                    email=dict(default='None', required=False),
                     user_agent=dict(default='simp_le/0'),
-                    server=dict(default=
-                                'https://acme-v01.api.letsencrypt.org/directory'
+                    server=dict(default='https://acme-v01.api.letsencrypt.org/directory',
+                                required=False
                                 ),
-                    revoke=dict(default='False', choicees=[
-                                'True',
-                                'False'
-                                ])
+                    revoke=dict(default='False', required=False, choices=['True','False'])
                 )
             )
 
+    # converts argument_spec into {k, v}
+    arg_defs = {k: v['default'] for k, v in module.argument_spec.items()}
 
+    # Transforms dictionary keys to cli like options switches
+    def createcliarglist(switch):
+        if switch.find('_'):
+            return '--'+switch.replace('_', '-')
+        else:
+            return '-'+switch
+
+    arg_dict = {createcliarglist(k): str(v) for k, v in arg_defs.items()}
+
+    # converts the dict to a list for passing to simp_le
+    argv = [ arg for switch_value in arg_dict.items() for arg in switch_value]
+
+    simp_le.main(argv)
+
+    module.exit_json(
+        changed=True
+    )
+
+    module.fail_json(
+        msg="[ERROR] Something happened!"
+    )
+
+from ansible.module_utils.basic import *
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
