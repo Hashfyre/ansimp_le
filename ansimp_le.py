@@ -190,7 +190,7 @@ def main():
                                     'False']),
                     account_key_public_exponent=dict(default='65537', required=False),
                     account_key_size=dict(default='4096', required=False),
-                    tos_SHA256=dict(default='33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f',
+                    tos_sha256=dict(default='33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f',
                                     required=False
                                     ),
                     email=dict(default='None', required=False),
@@ -198,56 +198,35 @@ def main():
                     server=dict(default='https://acme-v01.api.letsencrypt.org/directory',
                                 required=False
                                 ),
-                    revoke=dict(default='False', required=False, choices=['True','False'])
+                    revoke=dict(default='False',
+                                required=False, choices=['True', 'False'])
                 )
             )
 
     logging.basicConfig(filename='example.log', filemode='w', level=logging.WARNING)
 
     def createcliarglist(module):
-        domain_value = module.params['domain']
-        default_root_value = module.params['default_root']
-        plugins_value = module.params['plugins']
-        cert_key_size_value = module.params['cert_key_size']
-        valid_min_value =  module.params['valid_min']
-        reuse_key_value = module.params['reuse_key']
-        account_key_public_exponent_value = module.params['account_key_public_exponent']
-        account_key_size_value = module.params['account_key_size']
-        tos_SHA256_value = module.params['tos_SHA256']
-        email_value = module.params['email']
-        user_agent_value = module.params['user_agent']
-        server_value = module.params['server']
-        revoke_value = module.params['revoke']
+        logging.warning("module.params: %s", module.params)
 
-        argv_list = ['-d',
-                    domain_value,
-                    '--default_root',
-                    default_root_value,
-                    '-f',
-                    plugins_value,
-                    '--cert_key_size',
-                    cert_key_size_value,
-                    '--valid_min',
-                    valid_min_value,
-                    '--reuse_key',
-                    reuse_key_value,
-                    '--account_key_public_exponent',
-                    account_key_public_exponent_value,
-                    '--account_key_size',
-                    account_key_size_value,
-                    '--tos_sha256',
-                    tos_SHA256_value,
-                    '--email',
-                    email_value,
-                    '--user_agent',
-                    user_agent_value,
-                    '--server',
-                    server_value,
-                    '--revoke',
-                    revoke_value]
-        logging.warning('argv_list %s', argv_list)
-        return argv_list
+        params_dict = {k: v for k, v in module.params.items() if v != 'False'}
 
+        logging.warning("params_dict: %s", params_dict)
+
+        def convertkeystoswitches(key):
+            if key == "domain":
+                return '-'+key.replace('domain', 'd')
+            elif key == "plugins":
+                return '-'+key.replace('plugins', 'f')
+            else:
+                return '--'+key
+
+        arg_dict = {convertkeystoswitches(k):  str(v) for k, v in params_dict.items()}
+
+        logging.warning("arg_dict: %s", arg_dict)
+
+        arg_list = [arg for switch_value in arg_dict.items() for arg in switch_value]
+        logging.warning('arg_list: %s', arg_list)
+        return arg_list
 
     simp_le(createcliarglist(module))
 
