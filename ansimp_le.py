@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import sys
+import logging
 
 sys.path.append('./simp_le')
-# try:
-from simp_le import main
-# except ImportError:
-#     raise ImportError('[ERROR] Module simp_le could not be imported.')
+try:
+    from simp_le import main as simp_le
+except ImportError:
+    raise ImportError('[ERROR] Module simp_le could not be imported.')
 
 DOCUMENTATION = '''
 ---
@@ -201,22 +202,54 @@ def main():
                 )
             )
 
-    # converts argument_spec into {k, v}
-    arg_defs = {k: v['default'] for k, v in module.argument_spec.items()}
+    logging.basicConfig(filename='example.log', filemode='w', level=logging.WARNING)
 
-    # Transforms dictionary keys to cli like options switches
-    def createcliarglist(switch):
-        if switch.find('_'):
-            return '--'+switch.replace('_', '-')
-        else:
-            return '-'+switch
+    def createcliarglist(module):
+        domain_value = module.params['domain']
+        default_root_value = module.params['default_root']
+        plugins_value = module.params['plugins']
+        cert_key_size_value = module.params['cert_key_size']
+        valid_min_value =  module.params['valid_min']
+        reuse_key_value = module.params['reuse_key']
+        account_key_public_exponent_value = module.params['account_key_public_exponent']
+        account_key_size_value = module.params['account_key_size']
+        tos_SHA256_value = module.params['tos_SHA256']
+        email_value = module.params['email']
+        user_agent_value = module.params['user_agent']
+        server_value = module.params['server']
+        revoke_value = module.params['revoke']
 
-    arg_dict = {createcliarglist(k): str(v) for k, v in arg_defs.items()}
+        argv_list = ['-d',
+                    domain_value,
+                    '--default_root',
+                    default_root_value,
+                    '-f',
+                    plugins_value,
+                    '--cert_key_size',
+                    cert_key_size_value,
+                    '--valid_min',
+                    valid_min_value,
+                    '--reuse_key',
+                    reuse_key_value,
+                    '--account_key_public_exponent',
+                    account_key_public_exponent_value,
+                    '--account_key_size',
+                    account_key_size_value,
+                    '--tos_sha256',
+                    tos_SHA256_value,
+                    '--email',
+                    email_value,
+                    '--user_agent',
+                    user_agent_value,
+                    '--server',
+                    server_value,
+                    '--revoke',
+                    revoke_value]
+        logging.warning('argv_list %s', argv_list)
+        return argv_list
 
-    # converts the dict to a list for passing to simp_le
-    argv = [ arg for switch_value in arg_dict.items() for arg in switch_value]
 
-    simp_le.main(argv)
+    simp_le(createcliarglist(module))
 
     module.exit_json(
         changed=True
@@ -225,6 +258,7 @@ def main():
     module.fail_json(
         msg="[ERROR] Something happened!"
     )
+
 
 from ansible.module_utils.basic import *
 if __name__ == '__main__':
