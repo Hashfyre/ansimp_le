@@ -154,19 +154,33 @@ SSL Certificate:
 def main():
     module = AnsibleModule(
                 argument_spec=dict(
-                    domain=dict(),
-                    default_root=dict(),
-                    plugins=dict(),
-                    cert_key_size=dict()
-                    valid_min=dict(),
-                    reuse_key=dict(),
-                    account_key_public_exponent=dict()
-                    account_key_size=dict(),
-                    tos_SHA256=dict(),
-                    email=dict(),
-                    user_agent=dict(),
-                    server=dict(),
-                    revoke=dict()
+                    domain=dict(default='None'),
+                    default_root=dict(default='None'),
+                    plugins=dict(default=[], choices=[
+                                'account_key.json', 'cert.der', 'cert.pem',
+                                'chain.pem', 'external.sh', 'full.pem',
+                                'fullchain.pem', 'key.der', 'key.pem'
+                                 ]),
+                    cert_key_size=dict(default=4096)
+                    valid_min=dict(default=2592000),
+                    reuse_key=dict(default='False', choicees=[
+                                    'True',
+                                    'False'
+                                    ]),
+                    account_key_public_exponent=dict(default=65537)
+                    account_key_size=dict(default=4096),
+                    tos_SHA256=dict(default=
+                                    '33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f'
+                                    ),
+                    email=dict(default='None'),
+                    user_agent=dict(default='simp_le/0'),
+                    server=dict(default=
+                                'https://acme-v01.api.letsencrypt.org/directory'
+                                ),
+                    revoke=dict(default='False', choicees=[
+                                'True',
+                                'False'
+                                ])
                 )
             )
 
