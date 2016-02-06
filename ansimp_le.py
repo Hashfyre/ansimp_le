@@ -167,7 +167,7 @@ def main():
                                     'True',
                                     'False'
                                     ]),
-                    account_key_public_exponent=dict(default=65537)
+                    account_key_public_exponent=dict(default=65537),
                     account_key_size=dict(default=4096),
                     tos_SHA256=dict(default=
                                     '33d233c8ab558ba6c8ebc370a509acdded8b80e5d587aa5d192193f35226540f'
