@@ -210,7 +210,7 @@ def main():
 
         params_dict = {k: v for k, v in module.params.items() if v != 'False'}
 
-        logging.warning("params_dict: %s", params_dict)
+        logging.info("params_dict: %s", params_dict)
 
         def convertkeystoswitches(key):
             if key == "domain":
@@ -225,7 +225,7 @@ def main():
         logging.info("arg_dict: %s", arg_dict)
 
         arg_list = [arg for switch_value in arg_dict.items() for arg in switch_value]
-        logging.warning('arg_list: %s', arg_list)
+        logging.info'arg_list: %s', arg_list)
         return arg_list
 
     simp_le(createcliarglist(module))
