@@ -7,7 +7,7 @@ setup(
         'A Ansible Module for simp_le',
         'The Simple Let\'s Encrypt Client.'
     )
-    url='http://github.com/hashfyre/ansimp_le',
+    url='https://github.com/hashfyre/ansimp_le',
     author='Joy Bhattacherjee',
     author_email='joy.bhattacherjee@gmail.com',
     license='MIT',
